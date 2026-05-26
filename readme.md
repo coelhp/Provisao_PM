@@ -5,3 +5,4 @@
 - Propor padrão de projeto
 - Desenvolver código para coleta de dados;
 - Desenvolver dashboard para gestão visual.
+- Acompanhamento e manutenções necessárias.
