@@ -1,0 +1,342 @@
+# ============================================================
+# CALCULADORA DE INDICADORES DE MANUTENÇÃO
+# ============================================================
+#
+# Fórmulas:
+#
+# MTBF = (Tempo Período - SDT - NIDT - NSDT) / Falhas
+#
+# MTTR = NSDT / Falhas
+#
+# OE = (Tempo Período - SDT - NIDT - NSDT)
+#      / (Tempo Período - SDT - NIDT)
+#
+# NIDT = 0 por padrão
+#
+# ============================================================
+
+
+def calcular_indicadores(
+    unidades,
+    dias_periodo,
+    horas_dia,
+    sdt,
+    nsdt,
+    falhas,
+    nidt=0
+):
+    """
+    Calcula MTBF, MTTR e OE a partir dos dados realizados.
+
+    Entradas:
+        unidades       = quantidade de unidades
+        dias_periodo   = dias do período
+        horas_dia      = horas disponíveis por unidade/dia
+        SDT            = horas de SDT
+        NSDT           = horas de NSDT
+        falhas         = número de falhas
+        NIDT           = horas de NIDT (padrão = 0)
+
+    Retorno:
+        dicionário com os indicadores calculados
+    """
+
+    # ========================================================
+    # VALIDAÇÕES
+    # ========================================================
+
+    if unidades <= 0:
+        raise ValueError(
+            "A quantidade de unidades deve ser maior que zero."
+        )
+
+    if dias_periodo <= 0:
+        raise ValueError(
+            "A quantidade de dias deve ser maior que zero."
+        )
+
+    if horas_dia <= 0:
+        raise ValueError(
+            "As horas por dia devem ser maiores que zero."
+        )
+
+    if sdt < 0:
+        raise ValueError(
+            "SDT não pode ser negativo."
+        )
+
+    if nsdt < 0:
+        raise ValueError(
+            "NSDT não pode ser negativo."
+        )
+
+    if nidt < 0:
+        raise ValueError(
+            "NIDT não pode ser negativo."
+        )
+
+    if falhas <= 0:
+        raise ValueError(
+            "O número de falhas deve ser maior que zero."
+        )
+
+    # ========================================================
+    # TEMPO TOTAL DO PERÍODO
+    # ========================================================
+
+    tempo_periodo = (
+        unidades
+        * dias_periodo
+        * horas_dia
+    )
+
+    # ========================================================
+    # TEMPO DISPONÍVEL
+    # ========================================================
+
+    tempo_disponivel = (
+        tempo_periodo
+        - sdt
+        - nidt
+    )
+
+    if tempo_disponivel <= 0:
+        raise ValueError(
+            "SDT + NIDT é maior ou igual ao tempo do período."
+        )
+
+    # ========================================================
+    # TEMPO OPERACIONAL
+    # ========================================================
+
+    tempo_operacional = (
+        tempo_periodo
+        - sdt
+        - nidt
+        - nsdt
+    )
+
+    if tempo_operacional < 0:
+        raise ValueError(
+            "SDT + NIDT + NSDT não pode ser maior "
+            "que o tempo total do período."
+        )
+
+    # ========================================================
+    # MTBF
+    # ========================================================
+
+    mtbf = (
+        tempo_operacional
+        / falhas
+    )
+
+    # ========================================================
+    # MTTR
+    # ========================================================
+
+    mttr = (
+        nsdt
+        / falhas
+    )
+
+    # ========================================================
+    # OE
+    # ========================================================
+
+    oe = (
+        tempo_operacional
+        / tempo_disponivel
+    )
+
+    # ========================================================
+    # RETORNO
+    # ========================================================
+
+    return {
+
+        "Unidades": unidades,
+
+        "Dias": dias_periodo,
+
+        "Horas/dia": horas_dia,
+
+        "Tempo Período (h)": tempo_periodo,
+
+        "SDT (h)": sdt,
+
+        "NIDT (h)": nidt,
+
+        "NSDT (h)": nsdt,
+
+        "Falhas": falhas,
+
+        "Tempo Operacional (h)": tempo_operacional,
+
+        "MTBF (h)": mtbf,
+
+        "MTTR (h)": mttr,
+
+        "OE": oe
+    }
+
+
+# ============================================================
+# EXIBIÇÃO
+# ============================================================
+
+def exibir_resultado(resultado):
+
+    print("\n")
+    print("=" * 65)
+    print("           INDICADORES DE MANUTENÇÃO")
+    print("=" * 65)
+
+    print("\n--- PERÍODO ---")
+
+    print(
+        f"Unidades               : "
+        f"{resultado['Unidades']}"
+    )
+
+    print(
+        f"Dias                   : "
+        f"{resultado['Dias']}"
+    )
+
+    print(
+        f"Horas/dia              : "
+        f"{resultado['Horas/dia']:.2f} h"
+    )
+
+    print(
+        f"Tempo período          : "
+        f"{resultado['Tempo Período (h)']:.2f} h"
+    )
+
+    print("\n--- DADOS INFORMADOS ---")
+
+    print(
+        f"SDT                    : "
+        f"{resultado['SDT (h)']:.2f} h"
+    )
+
+    print(
+        f"NIDT                   : "
+        f"{resultado['NIDT (h)']:.2f} h"
+    )
+
+    print(
+        f"NSDT                   : "
+        f"{resultado['NSDT (h)']:.2f} h"
+    )
+
+    print(
+        f"Número de falhas      : "
+        f"{resultado['Falhas']}"
+    )
+
+    print("\n--- RESULTADOS ---")
+
+    print(
+        f"MTBF                   : "
+        f"{resultado['MTBF (h)']:.2f} h"
+    )
+
+    print(
+        f"MTTR                   : "
+        f"{resultado['MTTR (h)']:.2f} h"
+    )
+
+    print(
+        f"OE                     : "
+        f"{resultado['OE']:.2%}"
+    )
+
+    print(
+        f"\nTempo operacional     : "
+        f"{resultado['Tempo Operacional (h)']:.2f} h"
+    )
+
+    print("=" * 65)
+
+
+# ============================================================
+# PROGRAMA PRINCIPAL
+# ============================================================
+
+if __name__ == "__main__":
+
+    print("\n")
+    print("=" * 65)
+    print("       CALCULADORA DE INDICADORES DE MANUTENÇÃO")
+    print("=" * 65)
+
+    print("\nInforme os dados do período:\n")
+
+    unidades = int(
+        input("Quantidade de unidades: ")
+    )
+
+    dias_periodo = int(
+        input("Quantidade de dias do período: ")
+    )
+
+    horas_dia = float(
+        input("Horas por dia por unidade: ")
+    )
+
+    print("\nInforme os dados realizados:\n")
+
+    sdt = float(
+        input("SDT (horas): ")
+    )
+
+    nsdt = float(
+        input("NSDT (horas): ")
+    )
+
+    falhas = int(
+        input("Número de falhas: ")
+    )
+
+    # ========================================================
+    # NIDT
+    # ========================================================
+    #
+    # Por padrão:
+    #
+    # NIDT = 0
+    #
+    # Se quiser informar NIDT posteriormente,
+    # basta trocar esta linha.
+    # ========================================================
+
+    nidt = 0
+
+    # ========================================================
+    # CÁLCULO
+    # ========================================================
+
+    try:
+
+        resultado = calcular_indicadores(
+            unidades=unidades,
+            dias_periodo=dias_periodo,
+            horas_dia=horas_dia,
+            sdt=sdt,
+            nsdt=nsdt,
+            falhas=falhas,
+            nidt=nidt
+        )
+
+        exibir_resultado(resultado)
+
+    except ValueError as erro:
+
+        print("\n")
+        print("=" * 65)
+        print("ERRO")
+        print("=" * 65)
+        print(erro)
+        print("=" * 65)
