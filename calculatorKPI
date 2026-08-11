@@ -4,11 +4,11 @@
 #
 # Fórmulas:
 #
-# MTBF = (Tempo Período - SDT - NIDT - NSDT) / Falhas
+# MTBF = (Tempo Período - SDT - NIDT - NSDT) / Falhas -> Tempo Médio Entre Falhas
 #
-# MTTR = NSDT / Falhas
+# MTTR = NSDT / Falhas - Tempo Médio de Reparo
 #
-# OE = (Tempo Período - SDT - NIDT - NSDT)
+# OE = (Tempo Período - SDT - NIDT - NSDT) - Disponibilidade do Equipamento
 #      / (Tempo Período - SDT - NIDT)
 #
 # NIDT = 0 por padrão
