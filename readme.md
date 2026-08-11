@@ -7,3 +7,4 @@
 - Desenvolver dashboard para gestão visua;
 - Acompanhamento e manutenções necessárias;
 - Aplicação de novas ideias e melhorias.
+- Cálculo retroativo dos indicadores de performance da fábrica
